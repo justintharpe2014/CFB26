@@ -1411,7 +1411,47 @@ function placeUserCoachOnTeam(team, coach){
 }
 
 /* ---------- Records init ---------- */
-function buildInitialRecords(){
+const LEGENDS = [
+  { name:"Bear Bryant", legacy: 98000, wins: 323, losses: 85, natties: 6, playoffWins: 0, lastSchool:"Alabama" },
+  { name:"Nick Saban", legacy: 104000, wins: 292, losses: 71, natties: 7, playoffWins: 9, lastSchool:"Alabama" },
+  { name:"Kirby Smart", legacy: 69000, wins: 105, losses: 16, natties: 2, playoffWins: 7, lastSchool:"Georgia" },
+  { name:"Dabo Swinney", legacy: 72000, wins: 176, losses: 43, natties: 2, playoffWins: 6, lastSchool:"Clemson" },
+  { name:"Bobby Bowden", legacy: 95000, wins: 377, losses: 129, natties: 2, playoffWins: 0, lastSchool:"Florida State" },
+  { name:"Lou Holtz", legacy: 62000, wins: 249, losses: 132, natties: 1, playoffWins: 0, lastSchool:"Notre Dame" },
+  { name:"Jimmy Johnson", legacy: 52000, wins: 81, losses: 34, natties: 1, playoffWins: 0, lastSchool:"Miami" },
+  { name:"Tom Osborne", legacy: 88000, wins: 255, losses: 49, natties: 3, playoffWins: 0, lastSchool:"Nebraska" },
+  { name:"Urban Meyer", legacy: 77000, wins: 187, losses: 32, natties: 3, playoffWins: 0, lastSchool:"Florida/Ohio State" },
+  { name:"Joe Paterno", legacy: 90000, wins: 409, losses: 136, natties: 2, playoffWins: 0, lastSchool:"Penn State" },
+  { name:"Bob Stoops", legacy: 64000, wins: 191, losses: 48, natties: 1, playoffWins: 0, lastSchool:"Oklahoma" },
+  { name:"Steve Spurrier", legacy: 70000, wins: 228, losses: 89, natties: 1, playoffWins: 0, lastSchool:"Florida" },
+  { name:"Mack Brown", legacy: 61000, wins: 276, losses: 149, natties: 1, playoffWins: 0, lastSchool:"Texas" },
+  { name:"Pete Carroll", legacy: 68000, wins: 97, losses: 19, natties: 1, playoffWins: 0, lastSchool:"USC" },
+];
+
+function seedLegendCoaches(){
+  S.records.coachRegistry ??= [];
+  const existingNames = new Set(S.records.coachRegistry.map(x=>x.name));
+  for(const L of LEGENDS){
+    if(existingNames.has(L.name)) continue;
+    S.records.coachRegistry.push({
+      id: "legend_" + L.name.replace(/\s+/g,"_").toLowerCase(),
+      name: L.name,
+      retired: true,
+      hof: true,
+      yearsCoached: 25,
+      legacy: L.legacy,
+      career: { wins:L.wins, losses:L.losses, natties:L.natties, playoffWins:L.playoffWins },
+      lastSchool: L.lastSchool,
+      lastConf: "—",
+      updatedYear: 0,
+      user: false,
+      retiredYear: 0
+    });
+    S.records.hallOfFame ??= [];
+    S.records.hallOfFame.push(S.records.coachRegistry[S.records.coachRegistry.length-1]);
+  }
+
+  function buildInitialRecords(){
   return {
     legacy: [],
     coachRegistry: [],
